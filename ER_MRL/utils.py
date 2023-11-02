@@ -1,12 +1,10 @@
 import os
-import glob
 import shutil
+
 import numpy as np
 import pandas as pd 
 import gymnasium as gym
 import matplotlib.pyplot as plt 
-
-import tensorflow as tf 
 from tensorflow.python.summary.summary_iterator import summary_iterator
 
 def get_logs_values(logdir, models, nb_seeds):
@@ -49,9 +47,7 @@ def get_logs_values(logdir, models, nb_seeds):
 
     df_all = pd.concat(dfs, ignore_index=True)
 
-    
     #Transforming the pandas data into numpy arrays of mean and std reward for each model 
-
     models_tot_arrays = {}
     models_mean_arrays = {}
     models_std_arrays = {}

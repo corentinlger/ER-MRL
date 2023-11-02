@@ -1,14 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt 
-
 import gymnasium as gym
 from gymnasium import spaces 
-
 import reservoirpy as rpy
 from reservoirpy.nodes import Reservoir
-
-
-# TODO : Change the reservoir wrapper so only need 
 
 
 class ReservoirWrapper(gym.Wrapper):
@@ -35,17 +30,12 @@ class ReservoirWrapper(gym.Wrapper):
         super(ReservoirWrapper, self).__init__(env)
         
         self.env = env 
-        
-        
         self.reset_res = reset_res 
         self.skip_c = skip_c
-        
         # if action_space is Discrete we need to one hot encode it to pass it to the Reservoir 
         self.discrete_a_space = isinstance(env.action_space, gym.spaces.Discrete)
-        
         # Creation of a Reservoir with the given parameters 
         self.reservoir = Reservoir(units=units, lr=lr, sr=sr, input_scaling=iss, seed=seed)
-        
         # Modifying the observation space to match the Reservoir neurons shape and dtype
         if self.skip_c : 
             if isinstance(env.action_space, spaces.Discrete):
@@ -138,185 +128,35 @@ class ReservoirWrapper(gym.Wrapper):
         return one_hot_vector
     
 
-
-class POReservoirWrapper(gym.Wrapper):
-    """
-    Implements a custom Reservoir Wrapper following the gym interface.At each time step, the observation, action, and reward of the agent
-    are fed into a reservoir, which is a fixed recurrent neural network initialized with random weights. The reservoir is used to encode a 
-    context that captures temporal dependencies between past observations, actions, and rewards.
-    
-    We use the term 'context' to refer to the state of the Reservoir neurons, which encode past information about the agent's interactions 
-    with the environment (including the observation, action and reward associated). To avoid confusion, we return the context instead of the
-    actual observation of the wrapped environment in the reset and step methods.
-    
-    :param env: (gym.Env) Gym environment that will be wrapped
-    :param units (int) : The number of neurons in the Reservoir.
-    :param lr (float) : The leak-rate of the Reservoir neurons
-    :param sr (float) : The spectral radius of the Reservoir
-    :param iss (float) : The input scaling of the Reservoir
-    :param reset (bool) : Reset the Reservoir at each env reset or not
-    :param skip_c (bool) : Do askip connection of the current (o, a, r) with the Reservoir context
-    :param seed (int) : The random seed of the Reservoir
-    """
-    
-    def __init__(self, env, units, obs_units, lr, sr, iss, reset_res=True, seed=42):
-        super(POReservoirWrapper, self).__init__(env)
-        
-        self.env = env 
-        
-        self.obs_units = obs_units
-        self.reset_res = reset_res 
-        
-        # if action_space is Discrete we need to one hot encode it to pass it to the Reservoir 
-        self.discrete_a_space = isinstance(env.action_space, gym.spaces.Discrete)
-        
-        # Creation of a Reservoir with the given parameters 
-        self.reservoir = Reservoir(units=units, lr=lr, sr=sr, input_scaling=iss, seed=seed)
-        
-        # Modifying the observation space to match the Reservoir neurons shape and dtype
-        self.observation_space = spaces.Box(low=-1, high=1, shape=(obs_units,), dtype=np.float64)
-        
-    
-    def reset(self, seed=None, options=None):
-        """
-        Reset the wrapped environment and returns its new observation. Then, create two numpy arrays of zeros with action and reward shape
-        and feed the Reservoir with a vector containing these observation, action and the reward to provide a new Reservoir Context. We choose
-        to use arrays of zeros in order to give a neutral information every time an episode is reseted.
-        
-        We also give this information with a vector of shape (1, features) with features=concat(obs, action, reward) because the information
-        given to a Reservoir must be of shape (nb_timesteps, nb_features in ReservoirPy).
-        
-        :return: (np.array, dict)
-        """     
-        # Reseting the Reservoir 
-        if self.reset_res:
-            self.reservoir.reset()
-
-        # Getting the variables of self.env.reset
-        obs, info = self.env.reset(seed=seed, options=options)
-        obs = obs.reshape(1, -1)
-        reward = np.zeros(1).reshape(1, -1)
-        
-        # Action encoding 
-        action = self.one_hot_encode(0) if self.discrete_a_space else np.zeros(self.env.action_space.shape).reshape(1,-1)
-    
-        # Feeding the Reservoir with this data
-        reservoir_input = np.concatenate((obs, action, reward), axis=1)
-        context = self.reservoir(reservoir_input)
-        
-        context = context.flatten()[:self.obs_units]
-        
-        return context, info 
-    
-    def step(self, action):
-        """
-        Make a step by applying the action chosen to the wrapped environment. The context the state of the Reservoir neurons after its activation
-        by the (obs, action, reward) vector.
-        
-        :param action: ([float] or int) Action taken by the agent
-        :return: (np.ndarray, float, bool, bool, dict) context, reward, is the episode over?, truncated, additional informations
-        """
-        
-        # Getting the data from self.env.step
-        obs, reward, done, truncated, info = self.env.step(action)
-        obs = obs.reshape(1, -1)
-        reward_obs = np.array(reward).reshape(-1, 1)
-        
-        # Action encoding 
-        action = self.one_hot_encode(0) if self.discrete_a_space else np.zeros(self.env.action_space.shape).reshape(1,-1)
-        
-        # Feeding the Reservoir
-        reservoir_input = np.concatenate((obs, action, reward_obs), axis=1)
-        context = self.reservoir(reservoir_input)    
-        
-        context = context.flatten()[:self.obs_units]
-        return context, reward, done, truncated, info
-    
-    def one_hot_encode(self, action):
-        """
-        one hot encodes a Discrete action
-        
-        :param action: (int) Action taken by the agent
-        :return: (np.ndarray) One hot encoded action
-        """
-        one_hot_vector = np.zeros(self.env.action_space.n).reshape(1,-1)
-        one_hot_vector[0, action] = 1
-        
-        return one_hot_vector
-    
-
-    
-
-
 class MultiReservoirWrapper(gym.Wrapper):
     """
-    
-    !!! Description to do 
-    Implements a custom  Reservoir Wrapper following the gym interface.At each time step, the observation, action, and reward of the agent
-    are fed into a reservoir, which is a fixed recurrent neural network initialized with random weights. The reservoir is used to encode a 
-    context that captures temporal dependencies between past observations, actions, and rewards.
-    
-    We use the term 'context' to refer to the state of the Reservoir neurons, which encode past information about the agent's interactions 
-    with the environment (including the observation, action and reward associated). To avoid confusion, we return the context instead of the
-    actual observation of the wrapped environment in the reset and step methods.
-    
-    :param env: (gym.Env) Gym environment that will be wrapped
-    :param units (int) : The number of neurons in the Reservoir.
-    :param lr (float) : The leak-rate of the Reservoir neurons
-    :param sr (float) : The spectral radius of the Reservoir
-    :param iss (float) : The input scaling of the Reservoir
-    :param reset (bool) : Reset the Reservoir at each env reset or not
-    :param skip_c (bool) : Do askip connection of the current (o, a, r) with the Reservoir context
-    :param seed (int) : The random seed of the Reservoir
+    Reservoir wrapper with multiple reservoirs. The context becomes a vector containing the values of all the reservoir neurons.
     """
     
-
-    # plutôt faire qqch avec kwargs ? 
     def __init__(self, env, nb_res, reset_res=True, seed=42, **kwargs):
         super(MultiReservoirWrapper, self).__init__(env)
         
         self.env = env 
-        
         self.nb_res = nb_res
         self.reset_res = reset_res 
-        
         # check if action space is discrete or not 
         self.discrete_a_space = isinstance(env.action_space, gym.spaces.Discrete)
-
         # creation of Reservoirs with the given parameters 
         self.reservoirs = []
         parameters = ['units', 'iss', 'sr', 'lr']
-        
         for res_id in range(nb_res):
             units, iss, sr, lr = [kwargs[f"{param}_{res_id+1}"] for param in parameters]
             reservoir = Reservoir(units=units, lr=lr, sr=sr, input_scaling=iss, seed=seed+res_id)
             self.reservoirs.append(reservoir)
-            
-            
         # Modifying the observation space to match the Reservoir neurons shape and dtype
         total_units = np.sum([kwargs[f"units_{res_idx+1}"] for res_idx in range(self.nb_res)])
-        
         self.observation_space = spaces.Box(low=-1, high=1, shape=(total_units,), dtype=np.float64)
-        
-        
     
     def reset(self, seed=None, options=None):
-        """
-        Reset the wrapped environment and returns its new observation. Then, create two numpy arrays of zeros with action and reward shape
-        and feed the Reservoir with a vector containing these observation, action and the reward to provide a new Reservoir Context. We choose
-        to use arrays of zeros in order to give a neutral information every time an episode is reseted.
-        
-        We also give this information with a vector of shape (1, features) with features=concat(obs, action, reward) because the information
-        given to a Reservoir must be of shape (nb_timesteps, nb_features in ReservoirPy).
-        
-        :return: (np.array, dict)
-        """     
-
         # Reseting the Reservoir 
         if self.reset_res:
             for reservoir in self.reservoirs:
                 reservoir.reset()
-
         # Getting the variables of self.env.reset
         obs, info = self.env.reset(seed=seed, options=options)
         obs = obs.reshape(1, -1)
@@ -331,14 +171,6 @@ class MultiReservoirWrapper(gym.Wrapper):
         return context.flatten(), info 
     
     def step(self, action):
-        """
-        Make a step by applying the action chosen to the wrapped environment. The context the state of the Reservoir neurons after its activation
-        by the (obs, action, reward) vector.
-        
-        :param action: ([float] or int) Action taken by the agent
-        :return: (np.ndarray, float, bool, bool, dict) context, reward, is the episode over?, truncated, additional informations
-        """
-        
         # Getting the data from self.env.step
         obs, reward, done, truncated, info = self.env.step(action)
         obs = obs.reshape(1, -1)
@@ -354,18 +186,11 @@ class MultiReservoirWrapper(gym.Wrapper):
         return context.flatten(), reward, done, truncated, info
     
     def one_hot_encode(self, action):
-        """
-        one hot encodes a Discrete action
-        
-        :param action: (int) Action taken by the agent
-        :return: (np.ndarray) One hot encoded action
-        """
         one_hot_vector = np.zeros(self.env.action_space.n).reshape(1,-1)
         one_hot_vector[0, action] = 1
         
         return one_hot_vector
  
-    
     
 class RewardsSavingWrapper(gym.Wrapper):
         """
@@ -409,7 +234,67 @@ class RewardsSavingWrapper(gym.Wrapper):
             mean_reward = np.mean(rewards_last_np_ep)
             return mean_reward    
         
-      
+
+class POReservoirWrapper(gym.Wrapper):
+    """
+    Implements a partially observable wrapper where an agent's policy network has only access to the 'obs_units' neurons in a reservoir of 'units' neurons.
+    """
+    def __init__(self, env, units, obs_units, lr, sr, iss, reset_res=True, seed=42):
+        super(POReservoirWrapper, self).__init__(env)
+        
+        self.env = env 
+        self.obs_units = obs_units
+        self.reset_res = reset_res 
+        # if action_space is Discrete we need to one hot encode it to pass it to the Reservoir 
+        self.discrete_a_space = isinstance(env.action_space, gym.spaces.Discrete)
+        # Creation of a Reservoir with the given parameters 
+        self.reservoir = Reservoir(units=units, lr=lr, sr=sr, input_scaling=iss, seed=seed)
+        # Modifying the observation space to match the Reservoir neurons shape and dtype
+        self.observation_space = spaces.Box(low=-1, high=1, shape=(obs_units,), dtype=np.float64)
+        
+    
+    def reset(self, seed=None, options=None):
+        # Reseting the Reservoir 
+        if self.reset_res:
+            self.reservoir.reset()
+
+        # Getting the variables of self.env.reset
+        obs, info = self.env.reset(seed=seed, options=options)
+        obs = obs.reshape(1, -1)
+        reward = np.zeros(1).reshape(1, -1)
+        
+        # Action encoding 
+        action = self.one_hot_encode(0) if self.discrete_a_space else np.zeros(self.env.action_space.shape).reshape(1,-1)
+    
+        # Feeding the Reservoir with this data
+        reservoir_input = np.concatenate((obs, action, reward), axis=1)
+        context = self.reservoir(reservoir_input)
+        
+        context = context.flatten()[:self.obs_units]
+        
+        return context, info 
+    
+    def step(self, action):
+        # Getting the data from self.env.step
+        obs, reward, done, truncated, info = self.env.step(action)
+        obs = obs.reshape(1, -1)
+        reward_obs = np.array(reward).reshape(-1, 1)
+        
+        # Action encoding 
+        action = self.one_hot_encode(0) if self.discrete_a_space else np.zeros(self.env.action_space.shape).reshape(1,-1)
+        
+        # Feeding the Reservoir
+        reservoir_input = np.concatenate((obs, action, reward_obs), axis=1)
+        context = self.reservoir(reservoir_input)    
+        
+        context = context.flatten()[:self.obs_units]
+        return context, reward, done, truncated, info
+    
+    def one_hot_encode(self, action):
+        one_hot_vector = np.zeros(self.env.action_space.n).reshape(1,-1)
+        one_hot_vector[0, action] = 1
+        
+        return one_hot_vector
     
     
 class DeletedVelocityWrapper(gym.ObservationWrapper):
@@ -453,8 +338,6 @@ class DeletedVelocityWrapper(gym.ObservationWrapper):
             
     def observation(self, observation: np.ndarray) -> np.ndarray:
         return observation[self.observation_mask]
-
-
 
 
 class CollectObs_Wrapper(gym.Wrapper):

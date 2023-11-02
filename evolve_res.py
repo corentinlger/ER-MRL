@@ -1,16 +1,15 @@
 import time
 import datetime
-import numpy as np
 import argparse
 
-from stable_baselines3 import PPO 
-
+import numpy as np
 import gymnasium as gym
-
-from Wrappers import ReservoirWrapper, RewardsSavingWrapper, DeletedVelocityWrapper
-
 import optuna
 from optuna.storages import JournalStorage, JournalFileStorage
+from stable_baselines3 import PPO 
+
+from ER_MRL.wrappers import ReservoirWrapper, RewardsSavingWrapper, DeletedVelocityWrapper
+from ER_MRL.experiments import generate_sampler
 
 
 optuna.logging.set_verbosity(optuna.logging.ERROR)
@@ -36,20 +35,6 @@ parser.add_argument('--max_iss', type=float, required=False, default=10)
 
 args = parser.parse_args()
 
-def generate_sampler():
-      if args.sampler == 'Random':
-            sampler = optuna.samplers.RandomSampler()
-      elif args.sampler == 'Tpe':
-            sampler = optuna.samplers.TPESampler()
-      elif args.sampler =='Cmaes':
-            sampler = optuna.samplers.CmaEsSampler(restart_strategy='ipop')
-            print("restart_strategy ipop")
-      return sampler
-
-
-print(f"nb_trials : {args.nb_trials}")
-print(f"env_id : {args.env_id}")
-
 # Create exp_name and dir_names to save data
 exp_name = f"{args.env_id}_{args.h_test}_{args.training_steps//1000}k_steps"
 print(f"exp name : {exp_name}\n")
@@ -59,11 +44,9 @@ log_name = f"optuna-journal_{exp_name}.log"
 storage = JournalStorage(JournalFileStorage(log_name))
 
 def objective(trial):
-    print("")
-    print(f"Trial number {trial.number}")
-
+    print(f"\nTrial number {trial.number}")
     rewards = []
-    
+
     # Trial Hyper Parameters to optimize
     units = args.units
     if args.fixed_iss == "True":
@@ -82,11 +65,8 @@ def objective(trial):
         if args.del_obs == "True":
              env = DeletedVelocityWrapper(env)
              print("Velocity deleted")
-
         env = ReservoirWrapper(env, seed=seed,units=units, lr=lr, sr=sr, iss=iss, skip_c=skip_c)
-        print(env.reservoir.get_param)
         env = RewardsSavingWrapper(env)
-        print(f"{env = }")
         
         model = PPO('MlpPolicy', env, verbose=0, seed=seed)
         model.learn(total_timesteps=args.training_steps)
@@ -97,10 +77,7 @@ def objective(trial):
         
     return np.mean(rewards)
 
-
-sampler = generate_sampler()
-print(f"{sampler = }")
-
+sampler = generate_sampler(args.sampler)
 
 study = optuna.create_study(
     study_name=f'{exp_name}',
@@ -109,10 +86,8 @@ study = optuna.create_study(
     storage=storage,
     load_if_exists=True)
 
-
 start = time.time()
 study.optimize(objective, n_trials=args.nb_trials)
 end = time.time()
-
 
 print(f"Optimization took {str(datetime.timedelta(seconds=end-start))} for {args.nb_trials} trials on {args.env_id} task")
