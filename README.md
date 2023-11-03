@@ -15,10 +15,10 @@ Our repository provides:
 - **Use existing or custom [Gymnasium](https://gymnasium.farama.org/index.html) Reinforcement Learning environments**
 - **[Mask observations from an environment](ER_MRL/wrappers.py) and study POMDPs or [create your own reservoir architecture inside an ER-MRL agent](ER_MRL/wrappers.py) with gymnasium wrappers**
 
-### A [tutorial to parallelized our method](parallelization_tutorials/) :
+### A tutorial to parallelize our method :
 <!-- - **transfer the code on a CPU cluster** -->
-- **run the evolution phase ER-MRL agents in parallel**
-- **evaluate evolved ER-MRL agents against standard RL agents in parallel**
+- **[run the evolution phase ER-MRL agents in parallel](parallelization_tutorials/parallelized_evolve_res.slurm)**
+- **[evaluate evolved ER-MRL agents in parallel](parallelization_tutorials/parallelized_test.slurm)**
 <!-- - **retrieve the data to analyze the experiments results locally** -->
 
 ### Jupyter notebooks to :
@@ -51,11 +51,11 @@ To evolve and find the best reservoir structure within an ER-MRL agent on a spec
 python3 evolve_res.py --env_id HalfCheetah-v4 --h_test test_experiment --training_steps 300000 --nb_trials 100 --sampler Cmaes
 ```
 
-We recommend runing these evolution phases on a remote cluster because they can rapidly become computanionally expensive. To do so, you can follow the tutorials present in the [parallelization tutorials folder](parallelization_tutorials/).
+We recommend runing these evolution phases on a remote cluster because they can rapidly become computanionally expensive. To do so, you can follow the tutorials present in the [parallelization tutorials directory](parallelization_tutorials/).
 
 ### Test ER-MRL agents equipped with the best evolved reservoir
 
-If you want to test the best evolved ER-MRL agent, you can use the following command (make sure you provide the parameters corresponding to the ones used in the evolution phase):
+If you want to test the best evolved ER-MRL agent against standard RL agents, you can use the following command (make sure you provide the parameters corresponding to the ones used in the evolution phase):
 
 ```bash
 python3 test.py --env_id HalfCheetah-v4 --h_test test_experiment --HP_training_steps 300000
@@ -63,13 +63,11 @@ python3 test.py --env_id HalfCheetah-v4 --h_test test_experiment --HP_training_s
 
 After running both of these files, you may wish to analyze the results obtained during both the evolution and testing phases. This entails observing the evolution of the reservoir hyperparameters, as well as evaluating the mean and standard deviation performance of the best ER-MRL agents compared to classical RL agents. The outcomes of these experiments have been stored in Optuna journal logs and tensorboard logs, which can be easily visualized and analyzed with [this kind of notebook](results_analysis/results_analysis_notebook.ipynb).
 
-
-The procedure is the same if you want to evolve agents containing multiple reservoirs instead of one. You will have to use the `evolve_multi_res.py` file instead an specify the number of reservoirs desired.
+The procedure is the same if you want to evolve agents containing multiple reservoirs instead of one. You will have to use the `evolve_multi_res.py` to run the evolution, and `test_multi_res.py` to test the evolved agents performance, and specify the number of reservoirs desired.
 
 ### Study generalization of neural structures by evolving reservoirs of ER-MRL agents on different environments
 
-You can also decide to evolve the reservoirs of ER-MRL agents on a diversity of tasks, and test them on new unseen ones during the testing.
-To do this you can either use predefined sets of evolution environments, or go in [this file](ER_MRL/experiments.py) and add your own env_type (containing the environments that will appear during the evolution phase) to the ```generate_env_ids``` function as follows :  
+You can also decide to evolve the reservoirs of ER-MRL agents on a diversity of tasks, and test them on new unseen ones during the evolution phase. To do this you can either use a predefined set of evolution environments, or go in [this file](ER_MRL/experiments.py) and add your own `env_type` (set containing the environments that will appear during the evolution phase) to the ```generate_env_ids``` function as follows :  
 
 ```python
 elif env_type == 'your_env_type':   
