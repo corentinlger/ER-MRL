@@ -61,7 +61,7 @@ If you want to test the best evolved ER-MRL agent, you can use the following com
 python3 test.py --env_id HalfCheetah-v4 --h_test test_experiment --HP_training_steps 300000
 ```
 
-Now if you ran both of these files, you might want to analyze the results obtained during the evolution phase (observe the evolution of the reservoir hyperparameters) and the testing phase (observe the mean and standard deviation performance of best ER-MRL agents against classical RL agents). The results of both these experiments have been stored in Optuna journal logs and tensorboard logs respectively (à reecrire). You can easiely visualize and analyze by taking example on this [notebook](analyze_results.ipynb/)
+After running both of these files, you may wish to analyze the results obtained during both the evolution and testing phases. This entails observing the evolution of the reservoir hyperparameters, as well as evaluating the mean and standard deviation performance of the best ER-MRL agents compared to classical RL agents. The outcomes of these experiments have been stored in Optuna journal logs and tensorboard logs, which can be easily visualized and analyzed with [this kind of notebook](results_analysis/results_analysis_notebook.ipynb).
 
 
 The procedure is the same if you want to evolve agents containing multiple reservoirs instead of one. You will have to use the `evolve_multi_res.py` file instead an specify the number of reservoirs desired.
