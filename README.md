@@ -22,7 +22,7 @@ Our repository provides:
 <!-- - **retrieve the data to analyze the experiments results locally** -->
 
 ### Jupyter notebooks to :
-- **[Analyze results from evolution and testing phases](results_analysis_notebook.ipynb)**
+- **[Analyze results from evolution and testing phases](results_analysis/results_analysis_notebook.ipynb)**
 <!-- - **[Analyze the difference between RL agents observations and ER-MRL agents context](Link_to_create)** -->
 
 ## Installation (Delete my name for the anonymous repository)
