@@ -1,6 +1,5 @@
 import optuna
 
-
 def generate_params(trial, args):
       # Generated HPs 
       hps = ['lr', 'sr']

@@ -54,18 +54,15 @@ def objective(trial):
       iss = 1.0
     else:
       iss = trial.suggest_float("iss", args.min_iss, args.max_iss, log=True)
-    print(f"{iss = }")
     sr = trial.suggest_float("sr", args.min_sr, args.max_sr, log=True)
     lr = trial.suggest_float("lr", args.min_lr, args.max_lr, log=True)
     skip_c = True if args.skip_c == 'True' else False
-    print(f"skip_c : {skip_c}")
 
     for seed in range(args.nb_seeds):
         # We launch a whole RL training loop with the chosen HP in the Reservoir 
         env = gym.make(args.env_id)
         if args.del_obs == "True":
              env = DeletedVelocityWrapper(env)
-             print("Velocity deleted")
         env = ReservoirWrapper(env, seed=seed,units=units, lr=lr, sr=sr, iss=iss, skip_c=skip_c)
         env = RewardsSavingWrapper(env)
         

@@ -60,12 +60,12 @@ for i, model_name in enumerate(models):
     
     if model_name.startswith('RES'):
         env = MultiReservoirWrapper(env, nb_res=args.nb_res, seed=seed, **params)
-        for reservoir in env.reservoirs:
-            print(reservoir.get_param)
+        # for reservoir in env.reservoirs:
+        #     print(reservoir.get_param)
         
     model = PPO('MlpPolicy', env, verbose=0, learning_rate=lrn_r, tensorboard_log=logdir, seed=seed)
     model.learn(total_timesteps=args.training_steps, tb_log_name=f"{model_name}_{int(args.training_steps/1000)}k_steps_seed_{seed}")
     model.save(f"{models_dir}/{model_name}_{int(args.training_steps/1000)}k_steps_seed_{seed}")
 
 end = time.time()
-print(f"Training done in {str(datetime.timedelta(seconds=end-start))}")
+print(f"Testing done in {str(datetime.timedelta(seconds=end-start))}")

@@ -3,6 +3,7 @@
 
 Code for the `Evolving-Reservoirs-for-Meta-Reinforcement-Learning` (ER-MRL) paper. Our goal is to study the following question : How neural structures, optimized at an evolutionary scale, can enhance the capabilities of agents to learn complex tasks at a developmental scale?
 
+To achieve this, we adopt a computational framework based on meta reinforcement learning, modeling the interplay between evolution and development. At the evolutionary scale, we evolve reservoirs, a family of recurrent neural networks generated from hyperparameters. These evolved reservoirs are then utilized to facilitate the learning of a behavioral policy through reinforcement learning. This is done by encoding the environment state through the reservoir before presenting it to the agent. We refer to these agents, integrating a reservoir and a policy network, as ER-MRL agents.
 Our repository provides:
 
 ### Python scripts to :
@@ -15,14 +16,14 @@ Our repository provides:
 - **[Mask observations from an environment](ER_MRL/wrappers.py) and study POMDPs or [create your own reservoir architecture inside an ER-MRL agent](ER_MRL/wrappers.py) with gymnasium wrappers**
 
 ### A [tutorial to parallelized our method](parallelization_tutorials/) :
-- **transfer the code on a CPU cluster**
+<!-- - **transfer the code on a CPU cluster** -->
 - **run the evolution phase ER-MRL agents in parallel**
 - **evaluate evolved ER-MRL agents against standard RL agents in parallel**
-- **retrieve the data to analyze the experiments results locally**
+<!-- - **retrieve the data to analyze the experiments results locally** -->
 
 ### Jupyter notebooks to :
-- **[Analyze results from evolution and testing phases](analyze_results.ipynb/)**
-- **[Analyze the difference between RL agents observations and ER-MRL agents context](Link_to_create)**
+- **[Analyze results from evolution and testing phases](results_analysis_notebook.ipynb)**
+<!-- - **[Analyze the difference between RL agents observations and ER-MRL agents context](Link_to_create)** -->
 
 ## Installation (Delete my name for the anonymous repository)
 
@@ -47,7 +48,7 @@ pip install -r requirements.txt
 To evolve and find the best reservoir structure within an ER-MRL agent on a specific task, you can use `evolve_res.py`. You will need to specify some parameters such as the environment you want to use, the name of the experiment, the number of training timesteps ... (you can take a look at the complete list of argument in [this script](evolve_res.py)) : 
 
 ```bash
-python evolve.py --env_id HalfCheetah-v4 --h_test test_experiment --training_steps 300000 --nb_trials 100 --sampler Cmaes
+python3 evolve_res.py --env_id HalfCheetah-v4 --h_test test_experiment --training_steps 300000 --nb_trials 100 --sampler Cmaes
 ```
 
 We recommend runing these evolution phases on a remote cluster because they can rapidly become computanionally expensive. To do so, you can follow the tutorials present in the [parallelization tutorials folder](parallelization_tutorials/).
@@ -57,7 +58,7 @@ We recommend runing these evolution phases on a remote cluster because they can 
 If you want to test the best evolved ER-MRL agent, you can use the following command (make sure you provide the parameters corresponding to the ones used in the evolution phase):
 
 ```bash
-python test.py --env_id HalfCheetah-v4 --h_test test_experiment --HP_training_steps 300000
+python3 test.py --env_id HalfCheetah-v4 --h_test test_experiment --HP_training_steps 300000
 ```
 
 Now if you ran both of these files, you might want to analyze the results obtained during the evolution phase (observe the evolution of the reservoir hyperparameters) and the testing phase (observe the mean and standard deviation performance of best ER-MRL agents against classical RL agents). The results of both these experiments have been stored in Optuna journal logs and tensorboard logs respectively (à reecrire). You can easiely visualize and analyze by taking example on this [notebook](analyze_results.ipynb/)
@@ -78,7 +79,7 @@ elif env_type == 'your_env_type':
 To run an experiment, and evolve the reservoirs on a set of environments, you can use this command (here we use an existing set containing Ant-v4 and Swimmer-v4) : 
 
 ```bash
-python evolve_multi_envs.py --nb_res 2 --env_type Ant_Swimmer --h_test generalization_test_experiment --training_timesteps 300000 --nb_trials 100 --sampler Cmaes
+python3 evolve_multi_envs.py --nb_res 2 --env_type Ant_Swimmer --h_test generalization_test_experiment --training_timesteps 300000 --nb_trials 100 --sampler Cmaes
 ```
 
 ### Test ER-MRL agents with evolved reservoirs on new unseen tasks
@@ -91,5 +92,4 @@ python3 test_generalization.py --nb_res 2 --HP_env_type Ant_Swimmer --env_id Hal
 
 ## Development
 
-- Clean and refactor the code. Add tutorials. Add more functionnalities
-
+- **Contributions Welcome**: Pull requests are encouraged for tasks like code refactoring, adding comprehensive documentation, creating tutorials, and introducing new functionalities to further enhance the project's usability and functionality.

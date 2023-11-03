@@ -5,9 +5,9 @@
 
 #SBATCH -J Your_experiment_name
 
-#SBATCH --array=0-89
+#SBATCH --array=0-4
 # walltime (hh:mm::ss)
-#SBATCH -t 20:10:00
+#SBATCH -t 5:10:00
 
 # Specify the number of nodes(nodes=) and the number of cores per nodes(tasks-pernode=) to be used
 #SBATCH - N 1
@@ -19,10 +19,7 @@
 #############################
 
 env_id="$1"
-h_test="multi_res_cmaes"
-nb_trials=10
-sampler="Cmaes"
-nb_res=3
+h_test="parallelization_test"
 
 ENV_ID_JOB="${env_id}_${h_test}"
 
@@ -41,7 +38,7 @@ echo "#############################"
 
 # What you actually want to launch
 
-python3 HP_multi_res.py --nb_trials $nb_trials --env_id $env_id --nb_res $nb_res --h_test $h_test --training_steps 300000 --sampler $sampler
+python3 test.py --env_id $env_id --h_test $h_test --fixed_iss False --HP_training_steps 300000 --training_steps 1000000 
 
 # all done
 echo "Job finished"

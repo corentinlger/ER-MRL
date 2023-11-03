@@ -19,7 +19,7 @@
 #############################
 
 env_id="$1"
-h_test="one_res_cmaes"
+h_test="parallelization_test"
 nb_trials=10
 sampler="Cmaes"
 
@@ -40,7 +40,7 @@ echo "#############################"
 
 # What you actually want to launch
 
-python3 HP_mujo.py --nb_trials $nb_trials --env_id $env_id --h_test $h_test --fixed_iss True --training_steps 300000 --sampler $sampler
+python3 evolve_res.py --h_test $h_test --env_id $env_id --nb_trials $nb_trials --fixed_iss False --training_steps 300000 --sampler $sampler
 
 # all done
 echo "Job finished"
