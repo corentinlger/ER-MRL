@@ -79,7 +79,7 @@ elif env_type == 'your_env_type':
 To run an experiment, and evolve the reservoirs on a set of environments, you can use this command (here we use an existing set containing Ant-v4 and Swimmer-v4) : 
 
 ```bash
-python3 evolve_multi_envs.py --nb_res 2 --env_type Ant_Swimmer --h_test generalization_test_experiment --training_timesteps 300000 --nb_trials 100 --sampler Cmaes
+python3 evolve_generalization.py --nb_res 2 --env_type Ant_Swimmer --h_test generalization_test_experiment --training_timesteps 300000 --nb_trials 100 --sampler Cmaes
 ```
 
 ### Test ER-MRL agents with evolved reservoirs on new unseen tasks
