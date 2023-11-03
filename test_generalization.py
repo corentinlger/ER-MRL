@@ -16,7 +16,7 @@ parser.add_argument('--env_id', type=str, required=True)
 parser.add_argument('--HP_env_type', type=str, required=True)
 parser.add_argument('--h_test', type=str, required=True)
 parser.add_argument('--nb_res', type=int, required=True)
-parser.add_argument('--units', type=int, required=True)
+parser.add_argument('--units', type=int, required=False, default=100)
 parser.add_argument('--HP_training_steps', type=int, required=False, default=300000)
 parser.add_argument('--training_steps', type=int, required=False, default=10000000) 
 

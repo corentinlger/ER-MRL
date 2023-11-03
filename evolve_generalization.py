@@ -25,6 +25,7 @@ parser.add_argument('--nb_seeds', type=int, required=False, default=3)
 parser.add_argument('--ep_eval', type=int, required=False, default=10)
 parser.add_argument('--units', type=int, required=False, default=100)
 parser.add_argument('--skip_c', type=str, required=False, default=False)
+
 parser.add_argument('--min_sr', type=float, required=False, default=1e-4)
 parser.add_argument('--max_sr', type=float, required=False, default=1e2)
 parser.add_argument('--min_lr', type=float, required=False, default=1e-2)
