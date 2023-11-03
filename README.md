@@ -25,13 +25,13 @@ Our repository provides:
 - **[Analyze results from evolution and testing phases](results_analysis/results_analysis_notebook.ipynb)**
 <!-- - **[Analyze the difference between RL agents observations and ER-MRL agents context](Link_to_create)** -->
 
-## Installation (Delete my name for the anonymous repository)
+## Installation 
 
 1- Get the repository
 
 ```bash
-git clone https://github.com/anonymous/Evolving-Reservoirs-for-Meta-Reinforcement-Learning.git
-cd Evolving-Reservoirs-for-Meta-Reinforcement-Learning/
+git clone https://github.com/corentinlger/ER-MRL.git
+cd ER-MRL/
 ```
 2- Install the dependencies 
 
