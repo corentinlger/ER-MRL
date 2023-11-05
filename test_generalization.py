@@ -20,26 +20,31 @@ parser.add_argument('--units', type=int, required=False, default=100)
 parser.add_argument('--HP_training_steps', type=int, required=False, default=300000)
 parser.add_argument('--training_steps', type=int, required=False, default=10000000) 
 
+# Choose the random seed for testing
 args = parser.parse_args()
+# If you are using slurm to parallelize tests, get the slurm task id as random seed
 if os.environ.get('SLURM_ARRAY_TASK_ID'):
     seed = int(os.environ.get('SLURM_ARRAY_TASK_ID'))
 else:
     seed = 0
 
+# Create the experiment name of the evolution phase
 HP_exp_name = f"{args.HP_env_type}_{args.nb_res}_{args.h_test}_{args.HP_training_steps//1000}k_steps"
 log_name = f"optuna-journal_{HP_exp_name}.log"
 storage = JournalStorage(JournalFileStorage(log_name))
 
+# Load the results of the evolution phase
 study = optuna.load_study(
     study_name = f'{HP_exp_name}',
     storage = storage
 )  
 
+# Getting best hyperparameters from evolution phase
 params = study.best_params
 for res_id in range(1, args.nb_res + 1):
     params[f"units_{res_id}"] = args.units
 
-# New training Experiment
+# Create directories to store the results of the testing phase
 exp_name = f"{args.env_id}_{args.h_test}"
 logdir = os.path.join('logs', exp_name)
 models_dir = os.path.join('models', exp_name)
@@ -47,12 +52,12 @@ models_dir = os.path.join('models', exp_name)
 os.makedirs(logdir, exist_ok=True)
 os.makedirs(models_dir, exist_ok=True)
 
+# Test the ER-MRL agents with different learning rates 
 lrs = [0.0003, 0.0003]
 models = ['PPO', 'RES_PPO_0.0003']
 
-# Experiment run 
+# Run the experiment 
 start = time.time()
-
 for i, model_name in enumerate(models):
     lrn_r = lrs[i]
     env = gym.make(args.env_id)
