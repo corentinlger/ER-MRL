@@ -3,6 +3,8 @@
 
 Code for the `Evolving-Reservoirs-for-Meta-Reinforcement-Learning` (ER-MRL) paper. Our goal is to study the following question : How neural structures, optimized at an evolutionary scale, can enhance the capabilities of agents to learn complex tasks at a developmental scale?
 
+![Readme figure](images/readme_fig.png)
+
 To achieve this, we adopt a computational framework based on meta reinforcement learning, modeling the interplay between evolution and development. At the evolutionary scale, we evolve reservoirs, a family of recurrent neural networks generated from hyperparameters. These evolved reservoirs are then utilized to facilitate the learning of a behavioral policy through reinforcement learning. This is done by encoding the environment state through the reservoir before presenting it to the agent. We refer to these agents, integrating a reservoir and a policy network, as ER-MRL agents.
 Our repository provides:
 
@@ -10,10 +12,7 @@ Our repository provides:
 - **evolve ER-MRL agents with [one](evolve_res.py) or [multiple](evolve_multi_res.py) reservoir(s) on the same environment**
 - **evolve ER-MRL agents [with multiple reservoir on different environments](evolve_generalization.py) to study generalization**
 - **evaluate evolved ER-MRL agents against standard RL agents with the different setups mentioned above**
-
-### Files to :
-- **Use existing or custom [Gymnasium](https://gymnasium.farama.org/index.html) Reinforcement Learning environments**
-- **[Mask observations from an environment](ER_MRL/wrappers.py) and study POMDPs or [create your own reservoir architecture inside an ER-MRL agent](ER_MRL/wrappers.py) with gymnasium wrappers**
+- **[create your own reservoir architecture inside an ER-MRL agent or mask observations from an environment](ER_MRL/wrappers.py)**
 
 ### A tutorial to parallelize our method :
 <!-- - **transfer the code on a CPU cluster** -->
@@ -90,4 +89,4 @@ python3 test_generalization.py --nb_res 2 --HP_env_type Ant_Swimmer --env_id Hal
 
 ## Development
 
-- **Contributions Welcome**: Pull requests are encouraged for tasks like code refactoring, adding comprehensive documentation, creating tutorials, and introducing new functionalities to further enhance the project's usability and functionality.
+- **Contributions Welcome**: Pull requests are welcome for tasks like code refactoring, adding comprehensive documentation, creating tutorials, and introducing new functionalities.
