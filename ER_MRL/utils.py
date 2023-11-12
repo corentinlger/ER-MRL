@@ -4,6 +4,7 @@ import shutil
 import numpy as np
 import pandas as pd 
 import gymnasium as gym
+from scipy.fft import fft
 import matplotlib.pyplot as plt 
 from tensorflow.python.summary.summary_iterator import summary_iterator
 
@@ -124,3 +125,144 @@ def random_agent_avg_reward(env_id, n_episodes):
         mean_ep_rewards.append(ep_reward)
 
     return np.mean(mean_ep_rewards)
+
+
+def plot_episode_obs(dones, obs_history, obs_idx_names, context_history, episode_id, ep_timesteps=None, legend=True, figsize=(8, 4)):
+    ep_step_start = dones[episode_id - 1] if episode_id > 1 else 0 
+
+    ep_step_stop = dones[episode_id]
+    if ep_timesteps:
+        nb_steps = ep_timesteps
+    else:
+        nb_steps = ep_step_stop - ep_step_start
+
+    timesteps = np.arange(stop=nb_steps)
+
+    """Plot the RL agents Observation """
+
+    plt.figure(figsize=figsize)
+    # Remove comment below if also wanna plot the actions
+    #plt.plot(timesteps, actions_history[ep_step_start:ep_step_stop], label=action, alpha=0.5)
+
+    for idx in range(len(obs_idx_names)):
+        if ep_timesteps:
+            observation = obs_history[ep_step_start:ep_step_start+ep_timesteps, idx]
+        else:
+            observation = obs_history[ep_step_start:ep_step_stop, idx]
+        plt.plot(timesteps, observation, label=obs_idx_names[idx])
+        plt.title(f"Observations o_t Episode {episode_id}")
+        if legend:
+            plt.legend()
+    
+    plt.savefig(f"figures/obs_ep_{episode_id}")
+    plt.show()
+
+    """Plot the ER-MRL agents Context"""
+
+    plt.figure(figsize=figsize)
+    # Remove comment below if also wanna plot the actions
+    #plt.plot(timesteps, actions_history[ep_step_start:ep_step_stop], label=action, alpha=0.5)
+
+    obs_RES_neurons = 20
+    for idx in range(obs_RES_neurons):
+        if ep_timesteps:
+            context = context_history[ep_step_start:ep_step_start+ep_timesteps, idx]
+        else:
+            context = context_history[ep_step_start:ep_step_stop, idx]
+        plt.plot(timesteps, context)
+        plt.title(f"Contexts c_t Episode {episode_id}")
+    
+    plt.savefig(f"figures/ctx_ep_{episode_id}")
+    plt.show()
+
+    ep_step_start += (ep_step_stop - ep_step_start)
+    
+
+def plot_episode_fft(dones, obs_history, context_history, episode_id):
+
+    ep_step_start = dones[episode_id - 1] if episode_id > 1 else 0 
+
+    ep_step_stop = dones[episode_id]
+    nb_steps = ep_step_stop - ep_step_start
+    timesteps = np.arange(stop=nb_steps)
+
+    """Plot the fft of RL agents observations"""
+
+    observation = obs_history[ep_step_start:ep_step_stop, :]
+    sum_observations = np.sum(observation, axis=1)
+    
+    #Division factor for intensity
+    sum_observations = sum_observations / obs_history.shape[1]
+
+    fourier = fft(sum_observations)
+    # Plot the result (the spectrum |Xk|)
+    plt.figure(figsize=(9,3))
+    plt.ylim(0, 10)
+    plt.plot(np.abs(fourier))
+    plt.title(f"FFT Sum_observations Episode {episode_id}")
+    plt.show()
+
+    """Plot the fft of ER-MRL agents context"""
+
+    obs_RES_neurons = 100
+    context = context_history[ep_step_start:ep_step_stop, :obs_RES_neurons]
+
+    sum_contexts = np.sum(context, axis=1)
+
+    sum_contexts = sum_contexts / context_history.shape[1]
+
+    fourier = fft(sum_contexts)
+    # Plot the result (the spectrum |Xk|)
+    plt.figure(figsize=(9,3))
+    plt.ylim(0, 10)
+    plt.plot(np.abs(fourier))
+    plt.title(f"FFT Sum_Context Episode {episode_id}")
+    plt.show()
+
+    ep_step_start += (ep_step_stop - ep_step_start)
+
+
+def plot_observations_context(dones, obs_history, obs_idx_names, context_history, episode_id, ep_timesteps=None, legend=True, figsize=(16, 8)):
+    ep_step_start = dones[episode_id - 1] if episode_id > 1 else 0 
+    ep_step_stop = dones[episode_id]
+
+    if ep_timesteps:
+        nb_steps = ep_timesteps
+    else:
+        nb_steps = ep_step_stop - ep_step_start
+
+    timesteps = np.arange(stop=nb_steps)
+
+    fig, axes = plt.subplots(2, 1, figsize=figsize)
+
+    """ Observation """
+    ax_obs = axes[0]
+    ax_obs.set_title(f"Observations Episode {episode_id}")
+
+    for idx in range(len(obs_idx_names)):
+        if ep_timesteps:
+            observation = obs_history[ep_step_start:ep_step_start+ep_timesteps, idx]
+        else:
+            observation = obs_history[ep_step_start:ep_step_stop, idx]
+        ax_obs.plot(timesteps, observation, label=obs_idx_names[idx])
+        if legend:
+            ax_obs.legend()
+
+    """ RES_Context"""
+    ax_ctx = axes[1]
+    ax_ctx.set_title(f"RES_Context Episode {episode_id}")
+
+    obs_RES_neurons = 20
+    for idx in range(obs_RES_neurons):
+        if ep_timesteps:
+            context = context_history[ep_step_start:ep_step_start+ep_timesteps, idx]
+        else:
+            context = context_history[ep_step_start:ep_step_stop, idx]
+        ax_ctx.plot(timesteps, context)
+
+    plt.tight_layout()
+    plt.savefig(f"figures/combined_plots_ep_{episode_id}")
+    plt.show()
+    plt.close()  # Close the figure to avoid displaying it immediately
+
+    ep_step_start += (ep_step_stop - ep_step_start)

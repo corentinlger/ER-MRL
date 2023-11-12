@@ -15,14 +15,13 @@ Our repository provides:
 - **[create your own reservoir architecture inside an ER-MRL agent or mask observations from an environment](ER_MRL/wrappers.py)**
 
 ### A tutorial to parallelize our method :
-<!-- - **transfer the code on a CPU cluster** -->
 - **[run the evolution phase ER-MRL agents in parallel](parallelization_tutorials/parallelized_evolve_res.slurm)**
 - **[evaluate evolved ER-MRL agents in parallel](parallelization_tutorials/parallelized_test.slurm)**
-<!-- - **retrieve the data to analyze the experiments results locally** -->
 
 ### Jupyter notebooks to :
 - **[Analyze results from evolution and testing phases](results_analysis/results_analysis_notebook.ipynb)**
-<!-- - **[Analyze the difference between RL agents observations and ER-MRL agents context](Link_to_create)** -->
+- **[Save the videos of agents and the inputs of their action policy](results_analysis/save_videos_observations_context.ipynb)**
+- **[Plot and analyze the inputs of the trained agents](results_analysis/analyze_observations_context.ipynb)**
 
 ## Installation 
 
