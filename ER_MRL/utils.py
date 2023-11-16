@@ -266,3 +266,24 @@ def plot_observations_context(dones, obs_history, obs_idx_names, context_history
     plt.close()  # Close the figure to avoid displaying it immediately
 
     ep_step_start += (ep_step_stop - ep_step_start)
+
+
+def get_random_seed():
+    if os.environ.get('SLURM_ARRAY_TASK_ID'):
+        seed = int(os.environ.get('SLURM_ARRAY_TASK_ID'))
+    else:
+        seed = 0
+
+    return seed 
+
+def get_models(del_obs):
+    if del_obs == "True":
+        lrs = [0.0003, 0.0003 , 0.0001, 0.00005]  
+        models = ['PPO', 'RES_PPO_0.0003', 'RES_PPO_0.0001', 'RES_PPO_0.00005']
+    elif del_obs == "False":
+        lrs = [0.0003, 0.0003, 0.0001]  
+        models = ['PPO', 'RES_PPO_0.0003', 'RES_PPO_0.0001']
+    else:
+        raise(ValueError("Unknown type of envs"))
+    
+    return lrs, models
