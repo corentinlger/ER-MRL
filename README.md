@@ -85,7 +85,3 @@ And then test the evolved ER-MRL agents on a new unseen environment (HalfCheetah
 ```bash
 python3 test_generalization.py --nb_res 2 --HP_env_type Ant_Swimmer --env_id HalfCheetah-v4 --h_test generalization_test_experiment
 ```
-
-## Development
-
-- **Contributions Welcome**: Pull requests are welcome for tasks like code refactoring, adding comprehensive documentation, creating tutorials, and introducing new functionalities.
