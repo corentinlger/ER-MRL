@@ -1,7 +1,7 @@
 # Evolving-Reservoirs-for-Meta-Reinforcement-Learning
 
 
-Code for the `Evolving-Reservoirs-for-Meta-Reinforcement-Learning` (ER-MRL) paper. Our goal is to study the following question : How neural structures, optimized at an evolutionary scale, can enhance the capabilities of agents to learn complex tasks at a developmental scale?
+Code for the `Evolving-Reservoirs-for-Meta-Reinforcement-Learning` (ER-MRL) [paper](http://arxiv.org/abs/2312.06695). Our goal is to study the following question : How neural structures, optimized at an evolutionary scale, can enhance the capabilities of agents to learn complex tasks at a developmental scale?
 
 ![Readme figure](images/readme_fig.png)
 
