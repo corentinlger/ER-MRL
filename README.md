@@ -1,7 +1,7 @@
 # Evolving-Reservoirs-for-Meta-Reinforcement-Learning
 
 
-Code for the `Evolving-Reservoirs-for-Meta-Reinforcement-Learning` (ER-MRL) [paper](http://arxiv.org/abs/2312.06695). Our goal is to study the following question : How neural structures, optimized at an evolutionary scale, can enhance the capabilities of agents to learn complex tasks at a developmental scale?
+Code for the [`Evolving-Reservoirs-for-Meta-Reinforcement-Learning`](http://arxiv.org/abs/2312.06695) (ER-MRL) paper, presented at the [Evostar 2024](https://www.evostar.org/2024/) conference [Long Talk]. Our goal is to study the following question : How neural structures, optimized at an evolutionary scale, can enhance the capabilities of agents to learn complex tasks at a developmental scale?
 
 ![Readme figure](images/readme_fig.png)
 
@@ -90,3 +90,16 @@ And then test the evolved ER-MRL agents on a new unseen environment (HalfCheetah
 ```bash
 python3 test_generalization.py --nb_res 2 --HP_env_type Ant_Swimmer --env_id HalfCheetah-v4 --h_test generalization_test_experiment
 ```
+
+### Citing
+
+```bibtex
+@inproceedings{leger2024evolving,
+  title={Evolving Reservoirs for Meta Reinforcement Learning},
+  author={L{\'e}ger, Corentin and Hamon, Gautier and Nisioti, Eleni and Hinaut, Xavier and Moulin-Frier, Cl{\'e}ment},
+  booktitle={International Conference on the Applications of Evolutionary Computation (Part of EvoStar)},
+  pages={36--60},
+  year={2024},
+  organization={Springer}
+}
+ ```
