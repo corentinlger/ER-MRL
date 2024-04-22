@@ -9,10 +9,10 @@ To achieve this, we adopt a computational framework based on meta reinforcement 
 Our repository provides:
 
 ### Python scripts to :
-- **evolve ER-MRL agents with [one](evolve_res.py) or [multiple](evolve_multi_res.py) reservoir(s) on the same environment**
-- **evolve ER-MRL agents [with multiple reservoir on different environments](evolve_generalization.py) to study generalization**
+- **evolve ER-MRL agents with [one](scripts/evolve_res.py) or [multiple](scripts/evolve_multi_res.py) reservoir(s) on the same environment**
+- **evolve ER-MRL agents [with multiple reservoir on different environments](scripts/evolve_generalization.py) to study generalization**
 - **evaluate evolved ER-MRL agents against standard RL agents with the different setups mentioned above**
-- **[create your own reservoir architecture inside an ER-MRL agent or mask observations from an environment](ER_MRL/wrappers.py)**
+- **[create your own reservoir architecture inside an ER-MRL agent or mask observations from an environment](er_mrl/wrappers.py)**
 
 ### A tutorial to parallelize our method :
 - **[run the evolution phase ER-MRL agents in parallel](parallelization_tutorials/parallelized_evolve_res.slurm)**
@@ -44,12 +44,10 @@ pip install -r requirements.txt
 ### Evolve reservoir of ER-MRL agents on the same environment
 
 
-To evolve and find the best reservoir structure within an ER-MRL agent on a specific task, you can use `evolve_res.py`. See the complete list of parameters (environment choice, number of training timessteps ...) you can use while running the evolution in [this script](evolve_res.py). 
-
-<!-- To evolve and find the best reservoir structure within an ER-MRL agent on a specific task, you can use `evolve_res.py`. You will need to specify some parameters such as the environment you want to use, the name of the experiment, the number of training timesteps ... (you can take a look at the complete list of argument in [this script](evolve_res.py)) :  -->
+To evolve and find the best reservoir structure within an ER-MRL agent on a specific task, you can use `scripts/evolve_res.py`. See the complete list of parameters (environment choice, number of training timesteps ...) you can use while running the evolution in [this script](scripts/evolve_res.py). 
 
 ```bash
-python3 evolve_res.py --env_id HalfCheetah-v4 --h_test test_experiment --training_steps 300000 --nb_trials 100 --sampler Cmaes
+python3 scripts/evolve_res.py --env_id HalfCheetah-v4 --h_test test_experiment --training_steps 300000 --nb_trials 100 --sampler Cmaes
 ```
 
 We recommend runing these evolution phases on a remote cluster because they can rapidly become computanionally expensive. To do so, you can follow the tutorials present in the [parallelization tutorials directory](parallelization_tutorials/).
@@ -59,28 +57,27 @@ We recommend runing these evolution phases on a remote cluster because they can 
 If you want to test the best evolved ER-MRL agent against standard RL agents, you can use the following command (make sure you provide the parameters corresponding to the ones used in the evolution phase):
 
 ```bash
-python3 test.py --env_id HalfCheetah-v4 --h_test test_experiment --HP_training_steps 300000
+python3 scripts/test.py --env_id HalfCheetah-v4 --h_test test_experiment --HP_training_steps 300000
 ```
 
 ### Analyze the results
 
 To analyze the results obtained both during the evolution and the testing phases, you can follow the the steps described in [this jupyter notebook](results_analysis/results_analysis_notebook.ipynb).
 
-<!-- After running both of these files, you may wish to analyze the results obtained during both the evolution and testing phases. This entails observing the evolution of the reservoir hyperparameters, as well as evaluating the mean and standard deviation performance of the best ER-MRL agents compared to classical RL agents. The outcomes of these experiments have been stored in Optuna journal logs and tensorboard logs, which can be easily visualized and analyzed with [this kind of notebook](results_analysis/results_analysis_notebook.ipynb). -->
 
 ### Use a multi-reservoirs setup
 
-If you want to evolve agents containing multiple reservoirs instead of one, use the `evolve_multi_res.py` to run the evolution, and `test_multi_res.py` to test the evolved agents performance (you will need to specify the number of reservoirs desired).
+If you want to evolve agents containing multiple reservoirs instead of one, use the `scripts/evolve_multi_res.py` to run the evolution, and `scripts/test_multi_res.py` to test the evolved agents performance (you will need to specify the number of reservoirs desired).
 
 ### Study generalization of neural structures by evolving reservoirs of ER-MRL agents on different environments
 
 To evolve the reservoirs of ER-MRL agents on a diversity of environments and test them on unseen ones during the evolution phase, you can run the following command:
 
 ```bash
-python3 evolve_generalization.py --nb_res 2 --env_type Ant_Swimmer --h_test generalization_test_experiment --training_timesteps 300000 --nb_trials 100 --sampler Cmaes
+python3 scripts/evolve_generalization.py --nb_res 2 --env_type Ant_Swimmer --h_test generalization_test_experiment --training_timesteps 300000 --nb_trials 100 --sampler Cmaes
 ```
 
-You can either use a predefined set of evolution environments (the one above includes Ant-v4 and Swimmer-v4), or go in [this file](ER_MRL/experiments.py) and add a custom `env_type` to the ```generate_env_ids``` function.
+You can either use a predefined set of evolution environments (the one above includes Ant-v4 and Swimmer-v4), or go in [this file](er_mrl/experiments.py) and add a custom `env_type` to the ```generate_env_ids``` function.
 
 
 ### Test ER-MRL agents with evolved reservoirs on new unseen tasks
@@ -88,7 +85,7 @@ You can either use a predefined set of evolution environments (the one above inc
 And then test the evolved ER-MRL agents on a new unseen environment (HalfCheetah-v4 in this case) as follows : 
 
 ```bash
-python3 test_generalization.py --nb_res 2 --HP_env_type Ant_Swimmer --env_id HalfCheetah-v4 --h_test generalization_test_experiment
+python3 scripts/test_generalization.py --nb_res 2 --HP_env_type Ant_Swimmer --env_id HalfCheetah-v4 --h_test generalization_test_experiment
 ```
 
 ### Citing
