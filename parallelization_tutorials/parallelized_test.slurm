@@ -38,7 +38,7 @@ echo "#############################"
 
 # What you actually want to launch
 
-python3 test.py --env_id $env_id --h_test $h_test --fixed_iss False --HP_training_steps 300000 --training_steps 1000000 
+python3 scripts/test.py --env_id $env_id --h_test $h_test --fixed_iss False --HP_training_steps 300000 --training_steps 1000000 
 
 # all done
 echo "Job finished"
