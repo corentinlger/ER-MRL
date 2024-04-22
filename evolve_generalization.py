@@ -5,11 +5,12 @@ import argparse
 import numpy as np
 import gymnasium as gym
 import optuna
+
 from optuna.storages import JournalStorage, JournalFileStorage
 from stable_baselines3 import PPO 
 
-from ER_MRL.wrappers import MultiReservoirWrapper, RewardsSavingWrapper
-from ER_MRL.experiments import generate_env_ids, env_target_reward, env_random_reward, generate_params, generate_sampler
+from er_mrl.wrappers import MultiReservoirWrapper, RewardsSavingWrapper
+from er_mrl.experiments import generate_env_ids, env_target_reward, env_random_reward, generate_params, generate_sampler
 
 if __name__ == "__main__" :
 

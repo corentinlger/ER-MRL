@@ -8,8 +8,8 @@ import optuna
 from optuna.storages import JournalStorage, JournalFileStorage
 from stable_baselines3 import PPO 
 
-from ER_MRL.wrappers import MultiReservoirWrapper, RewardsSavingWrapper, DeletedVelocityWrapper
-from ER_MRL.experiments import generate_sampler, generate_params
+from er_mrl.wrappers import MultiReservoirWrapper, RewardsSavingWrapper, DeletedVelocityWrapper
+from er_mrl.experiments import generate_sampler, generate_params
 
 if __name__ == "__main__" :
 

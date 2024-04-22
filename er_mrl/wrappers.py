@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt 
 import gymnasium as gym
-from gymnasium import spaces 
 import reservoirpy as rpy
+
+from gymnasium import spaces 
 from reservoirpy.nodes import Reservoir
 
 
