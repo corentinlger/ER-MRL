@@ -37,6 +37,7 @@ cd ER-MRL/
 python -m venv myvenv
 source myvenv/bin/activate
 pip install -r requirements.txt
+pip install -e .
 ```
 
 ## Usage
