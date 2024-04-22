@@ -1,3 +1,6 @@
 logs/
 models/
 myvenv/
+er_mrl.egg-info
+# er_mrl/__pycache__/
+*__pycache__/*
